@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Word Trainer</title>
+<style>
+:root{--bg:#f3f6fb;--fg:#1f2a44;--mut:#5f6b85;--card:#fff;--line:#d9e0ee;--acc:#2a56c6;--onacc:#fff;--hl:#ffd23f;--ok:#1f8a4c;--bad:#c93b3b;--warn:#c98a10;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--hl:#6b5a14;--bg:#141a2b;--fg:#e8ecf7;--mut:#9aa6c4;--card:#1d2540;--line:#2f3a5e;--acc:#7da2ff;--onacc:#101729;--ok:#4cc47f;--bad:#f07a7a;--warn:#f0b94a;color-scheme:dark}}
+:root[data-theme="dark"]{--hl:#6b5a14;--bg:#141a2b;--fg:#e8ecf7;--mut:#9aa6c4;--card:#1d2540;--line:#2f3a5e;--acc:#7da2ff;--onacc:#101729;--ok:#4cc47f;--bad:#f07a7a;--warn:#f0b94a;color-scheme:dark}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#app{max-width:520px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:28px;margin:8px 0 4px;letter-spacing:-.01em}
+h2{font-size:22px;margin:4px 0 12px}
+p{margin:0 0 14px}.mut{color:var(--mut)}.sm{font-size:14px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.set,.mode{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+.mode b{font-size:18px}
+.btn{background:var(--acc);color:var(--onacc);border:0;border-radius:12px;padding:13px 18px;font-weight:600;width:100%;margin-top:10px}
+.btn.alt{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.ghost{background:none;border:0;color:var(--acc);padding:6px 0;font-weight:600}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin-bottom:18px}.bar i{display:block;height:100%;background:var(--acc)}
+.seg{display:flex;gap:6px;margin:0 0 14px}
+.seg button{flex:1;padding:9px 4px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:15px}
+.seg button[aria-pressed="true"]{background:var(--acc);color:var(--onacc);border-color:var(--acc);font-weight:600}
+.q{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 18px;text-align:center;min-height:190px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px}
+.lab{font-size:14px;color:var(--mut)}
+.big{font-size:30px;font-weight:700;line-height:36px;background:repeating-linear-gradient(transparent 0 21px,var(--hl) 21px 33px,transparent 33px 36px);padding:0 6px}
+.ans{font-size:24px;font-weight:600;color:var(--acc)}
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-top:8px}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,var(--card))}
+.opt.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 18%,var(--card))}
+input[type=text]{width:100%;font:inherit;font-size:22px;padding:13px 14px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--fg);margin-top:14px}
+.fb{margin-top:12px;font-weight:600}.fb.ok{color:var(--ok)}.fb.bad{color:var(--bad)}.fb.warn{color:var(--warn)}
+.row{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.row .w{flex:1}.dot{width:12px;height:12px;border-radius:50%;background:var(--line);flex:none}
+.d-ok{background:var(--ok)}.d-warn{background:var(--warn)}.d-bad{background:var(--bad)}
+.chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding:8px 0;border-bottom:1px solid var(--line);margin-bottom:6px}
+.chart div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:12px;color:var(--mut)}
+.chart i{display:block;width:100%;background:var(--acc);border-radius:5px 5px 0 0;min-height:3px}
+.spk{background:none;border:1px solid var(--line);border-radius:50%;width:42px;height:42px;font-size:18px;padding:0;line-height:1}
+.score{font-size:44px;font-weight:700;margin:6px 0}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// Word sets. To add a new set, copy one block and change id, title and words ["English","Latvian"].
+const SETS=[
+{id:"u1-1",title:"Unit 1 · Words 1",words:[
+["sociable","sabiedrisks"],["swimming instructor","peldēšanas instruktors"],["teacher","skolotājs"],["theatre","teātris"],
+["tour guide","gids"],["travel agent","ceļojumu aģents"],["trekking","tāls pārgājiens (treks)"],["unfriendly","nedraudzīgs"],
+["unimaginative","bez fantāzijas"],["unsociable","nesabiedrisks"],["unusual","neparasts"],["waiter","viesmīlis"],
+["the sun is setting","saule riet"],["training","apmācība, treniņš"],["first impression","pirmais iespaids"],["nervous","nervozs, satraukts"]]}
+];
+let S={words:{},sess:{}};
+try{S=JSON.parse(localStorage.getItem("wordtrainer1"))||S}catch(e){}
+const save=()=>{try{localStorage.setItem("wordtrainer1",JSON.stringify(S))}catch(e){}};
+const app=document.getElementById("app");
+let dir="mix",cur=null;
+const get=(s,w)=>S.words[s.id+"|"+w[0]]||{c:0,w:0};
+const accOf=x=>x.c+x.w?x.c/(x.c+x.w):null;
+const learned=(s)=>s.words.filter(w=>{const x=get(s,w),a=accOf(x);return x.c>=2&&a>=0.75}).length;
+const norm=t=>t.toLowerCase().replace(/\s+/g," ").trim();
+const shuf=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+function lev(a,b){const d=[];for(let i=0;i<=a.length;i++){d[i]=[i]}for(let j=1;j<=b.length;j++)d[0][j]=j;
+for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]}
+const setById=id=>SETS.find(s=>s.id===id);
+const spk="";
+function note(m){let n=document.getElementById("note");if(!n){n=document.createElement("div");n.id="note";n.style.cssText="position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:12px 14px;border-radius:12px;font-size:15px;z-index:9";document.body.appendChild(n)}n.textContent=m;n.hidden=false;clearTimeout(n.t);n.t=setTimeout(()=>{n.hidden=true},4500)}
+function speak(t){
+if(!("speechSynthesis" in window)){note("This device can’t play speech here. Try opening the link in Safari or Chrome.");return}
+try{const ss=window.speechSynthesis;if(ss.speaking||ss.pending)ss.cancel();ss.resume();
+const u=new SpeechSynthesisUtterance(t);u.lang="en-GB";u.rate=0.85;u.volume=1;
+const vs=ss.getVoices();const v=vs.find(x=>x.lang.replace("_","-")==="en-GB")||vs.find(x=>x.lang.indexOf("en")===0);if(v)u.voice=v;
+u.onerror=()=>note("No sound. Check the volume and the silent switch, or open the link in Safari or Chrome.");
+setTimeout(()=>ss.speak(u),60)}catch(e){note("No sound on this device.")}}
+function say(){}
+
+function home(){
+cur=null;
+app.innerHTML=`<h1>Word Trainer</h1><p class="mut">Pick a set and practise. Your progress stays on this device.</p>`+
+SETS.map(s=>`<button class="set" onclick="openSet('${s.id}')"><b>${s.title}</b><span class="mut sm">${s.words.length} words · ${learned(s)} learned</span></button>`).join("");
+}
+function openSet(id){
+cur=null;const s=setById(id);
+const dl={en:"EN → LV",lv:"LV → EN",mix:"Mixed"};
+app.innerHTML=`<button class="ghost" onclick="home()">← All sets</button><h2>${s.title}</h2>
+<p class="mut sm">Direction for cards and choose mode</p>
+<div class="seg">${Object.keys(dl).map(k=>`<button aria-pressed="${dir===k}" onclick="dir='${k}';openSet('${id}')">${dl[k]}</button>`).join("")}</div>
+<button class="mode" onclick="start('${id}','cards')"><b>Flashcards</b><span class="mut sm">Flip the card, then say if you knew it</span></button>
+<button class="mode" onclick="start('${id}','choose')"><b>Choose the answer</b><span class="mut sm">Pick the right translation from four options</span></button>
+<button class="mode" onclick="start('${id}','write')"><b>Write the word</b><span class="mut sm">See the Latvian, type the English spelling</span></button>
+<button class="btn alt" onclick="progress('${id}')">My progress</button>`;
+}
+function start(id,mode){
+const s=setById(id);
+const q=s.words.map(w=>{const a=accOf(get(s,w));return[(a===null?0.5:a)+Math.random()*0.5,w]}).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+cur={s,mode,q,i:0,ok:0,miss:[]};show();
+}
+function head(){
+const n=cur.q.length;
+return `<div class="top"><button class="ghost" onclick="openSet('${cur.s.id}')">← Stop</button><span class="mut">${cur.i+1} / ${n}</span></div><div class="bar"><i style="width:${cur.i/n*100}%"></i></div>`;
+}
+function record(ok){
+const w=cur.q[cur.i],k=cur.s.id+"|"+w[0],x=S.words[k]||(S.words[k]={c:0,w:0});
+if(ok){x.c++;cur.ok++}else{x.w++;cur.miss.push(w)}
+save();
+}
+function nextQ(){cur.i++;show()}
+function show(){
+if(cur.i>=cur.q.length)return finish();
+const w=cur.q[cur.i];
+cur.lv=cur.mode==="write"?true:dir==="mix"?Math.random()<0.5:dir==="lv";
+const front=cur.lv?w[1]:w[0],back=cur.lv?w[0]:w[1];
+const fl=cur.lv?"Latvian":"English",bl=cur.lv?"English":"Latvian";
+if(cur.mode==="cards"){
+app.innerHTML=head()+`<div class="q" id="card" onclick="flip()" tabindex="0"><div class="lab">${fl}</div><div class="big">${front}</div>${cur.lv?"":spk}<div id="back" hidden><div class="lab">${bl}</div><div class="ans">${back}</div>${cur.lv?spk:""}</div></div>
+<p class="mut sm" id="tip" style="text-align:center;margin-top:10px">Tap the card to see the answer</p><div id="btns" hidden><button class="btn" onclick="rate(true)">I knew it</button><button class="btn alt" onclick="rate(false)">Not yet</button></div>`;
+}else if(cur.mode==="choose"){
+const pool=shuf(cur.s.words.filter(x=>x!==w)).slice(0,3).concat([w]);
+const opts=shuf(pool);
+app.innerHTML=head()+`<div class="q"><div class="lab">${fl}</div><div class="big">${front}</div>${cur.lv?"":spk}</div><div id="opts">${opts.map(o=>`<button class="opt" data-ok="${o===w}" onclick="pick(this)">${cur.lv?o[0]:o[1]}</button>`).join("")}</div><div id="nx"></div>`;
+}else{
+app.innerHTML=head()+`<div class="q"><div class="lab">Write in English</div><div class="big">${front}</div><div class="lab">${back.length} characters</div></div>
+<input type="text" id="inp" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Your answer">
+<div id="fb"></div><button class="btn" id="chk" onclick="check()">Check</button>`;
+const inp=document.getElementById("inp");inp.focus();
+inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();cur.done?nextQ():check()}});
+cur.done=false;
+}
+}
+function flip(){
+if(cur.lv)say();
+document.getElementById("back").hidden=false;document.getElementById("btns").hidden=false;document.getElementById("tip").hidden=true;
+}
+function rate(ok){record(ok);nextQ()}
+function pick(b){
+const all=document.querySelectorAll("#opts .opt");
+all.forEach(o=>{o.disabled=true;if(o.dataset.ok==="true")o.classList.add("ok")});
+const ok=b.dataset.ok==="true";if(!ok)b.classList.add("bad");
+record(ok);say();
+document.getElementById("nx").innerHTML=`<button class="btn" onclick="nextQ()">Next</button>`;
+}
+function check(){
+if(cur.done)return nextQ();
+const w=cur.q[cur.i],inp=document.getElementById("inp"),a=norm(inp.value),t=norm(w[0]);
+if(!a){inp.focus();return}
+const ok=a===t;
+inp.disabled=true;cur.done=true;
+let msg;
+if(ok)msg=`<div class="fb ok">Correct!</div>`;
+else if(lev(a,t)<=1)msg=`<div class="fb warn">Almost — check the spelling. Correct: <span class="ans">${w[0]}</span></div>`;
+else msg=`<div class="fb bad">Not quite. Correct: <span class="ans">${w[0]}</span></div>`;
+document.getElementById("fb").innerHTML=msg+`<div style="margin-top:10px">${spk}</div>`;say();
+document.getElementById("chk").textContent="Next";
+record(ok);
+}
+function finish(){
+const n=cur.q.length,pct=Math.round(cur.ok/n*100),id=cur.s.id;
+(S.sess[id]=S.sess[id]||[]).push({t:Date.now(),m:cur.mode,p:pct});
+S.sess[id]=S.sess[id].slice(-30);save();
+const msg=pct>=90?"Excellent work.":pct>=70?"Good progress.":"Keep going — repeat the missed words.";
+app.innerHTML=`<h2>Round complete</h2><div class="score">${cur.ok} / ${n}</div><p>${msg}</p>`+
+(cur.miss.length?`<p class="mut sm">To repeat:</p>`+cur.miss.map(w=>`<div class="row"><span class="w"><b>${w[0]}</b> — ${w[1]}</span></div>`).join(""):"")+
+`<button class="btn" onclick="start('${id}','${cur.mode}')">Practise again</button><button class="btn alt" onclick="progress('${id}')">My progress</button><button class="btn alt" onclick="openSet('${id}')">Back to set</button>`;
+}
+function progress(id){
+cur=null;const s=setById(id),ss=S.sess[id]||[];
+let trend="Do a few rounds to see your trend.";
+if(ss.length>=2){
+const avg=a=>a.reduce((t,x)=>t+x.p,0)/a.length;
+const last=ss.slice(-3),prev=ss.slice(Math.max(0,ss.length-6),ss.length-3);
+if(prev.length){const d=avg(last)-avg(prev);
+trend=d>=5?"You are getting better. Keep it up.":d<=-5?"Your results dropped a little. Revisit the red words below.":"Your results are steady. Focus on the red words to move up."}
+else trend="Do a few more rounds to see your trend."}
+const rows=s.words.map(w=>{const x=get(s,w),a=accOf(x);return{w,x,a}}).sort((p,q)=>(p.a===null?-0.5:p.a)-(q.a===null?-0.5:q.a));
+const cls=a=>a===null?"":a>=0.8?"d-ok":a>=0.5?"d-warn":"d-bad";
+const bars=ss.slice(-10).map(x=>`<div><span>${x.p}</span><i style="height:${Math.max(x.p,3)}%"></i></div>`).join("");
+const dates=ss.slice(-10).map(x=>`<div style="flex:1;text-align:center">${new Date(x.t).toLocaleDateString(undefined,{day:"numeric",month:"numeric"})}</div>`).join("");
+app.innerHTML=`<button class="ghost" onclick="openSet('${id}')">← Back</button><h2>${s.title}</h2>
+<p><b>${learned(s)} of ${s.words.length}</b> words learned</p><p class="mut">${trend}</p>`+
+(ss.length?`<div class="chart" aria-label="Score per round, percent">${bars}</div><div style="display:flex;gap:6px;font-size:11px;color:var(--mut);margin-bottom:18px">${dates}</div>`:"")+
+`<p class="mut sm">Words, weakest first. Green = known, orange = shaky, red = needs work.</p>`+
+rows.map(r=>`<div class="row"><span class="dot ${cls(r.a)}"></span><span class="w"><b>${r.w[0]}</b><br><span class="mut sm">${r.w[1]}</span></span><span class="mut sm">${r.x.c} right · ${r.x.w} wrong</span></div>`).join("");
+}
+home();
+</script>
+</body>
+</html>
