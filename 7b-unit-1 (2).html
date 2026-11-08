@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>7.b – Unit 1: gatavojamies diktātam</title>
+<style>
+:root{--bg:#f6f8fc;--card:#fff;--tx:#1d2433;--mu:#66708a;--pr:#3b6bff;--prt:#fff;--ok:#1f9d55;--bad:#d64545;--bd:#dde3f0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151d;--card:#1b2030;--tx:#eef1f8;--mu:#9aa4bf;--pr:#6f93ff;--prt:#0d1224;--ok:#4cc27f;--bad:#ff7a7a;--bd:#2c3450;color-scheme:dark}}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.4}
+main{max-width:560px;margin:0 auto;padding:16px}
+h1{font-size:1.3rem;margin:4px 0 2px}.sub{color:var(--mu);font-size:.9rem;margin:0 0 14px}
+nav{display:flex;gap:6px;margin-bottom:14px}
+nav button{flex:1;padding:10px 4px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font-size:.9rem;cursor:pointer}
+nav button.on{background:var(--pr);color:var(--prt);border-color:var(--pr)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:20px;text-align:center}
+.big{font-size:1.9rem;font-weight:700;margin:10px 0}.ipa{color:var(--mu);font-size:1.05rem}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+button.b{padding:10px 16px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:1rem;cursor:pointer}
+button.p{background:var(--pr);color:var(--prt);border-color:var(--pr)}
+input[type=text]{width:100%;padding:12px;font-size:1.2rem;border-radius:10px;border:2px solid var(--bd);background:var(--bg);color:var(--tx);text-align:center}
+.fb{min-height:1.6em;margin-top:10px;font-weight:600}.ok{color:var(--ok)}.bad{color:var(--bad)}
+.mu{color:var(--mu);font-size:.85rem}
+.sel{display:flex;gap:6px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+.sel button{padding:6px 12px;border-radius:99px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);cursor:pointer;font-size:.85rem}
+.sel button.on{background:var(--pr);color:var(--prt);border-color:var(--pr)}
+table{width:100%;border-collapse:collapse;text-align:left}td{padding:8px 4px;border-bottom:1px solid var(--bd);font-size:.95rem}
+.sp{cursor:pointer;background:none;border:0;font-size:1.1rem;color:var(--tx)}
+.hid{display:none}
+</style>
+</head>
+<body>
+<main>
+<h1>Unit 1 – words 📚</h1>
+<p class="sub">7.b klase · gatavojamies vārdu diktātam</p>
+<nav id="nav">
+<button data-t="cards" class="on">Kartiņas</button>
+<button data-t="dict">Diktāts</button>
+<button data-t="tr">Tulkojums</button>
+<button data-t="list">Vārdi</button>
+</nav>
+<div class="sel" id="ps"><button data-p="0" class="on">Visi (30)</button><button data-p="1">1. daļa: careful – ice-skating</button><button data-p="2">2. daļa: sociable – nervous</button></div>
+<section id="cards" class="card"></section>
+<section id="dict" class="card hid"></section>
+<section id="tr" class="card hid"></section>
+<section id="list" class="card hid"></section>
+<p class="mu" style="text-align:center;margin-top:14px">Tavi rezultāti tiek saglabāti tikai šajā ierīcē.</p>
+</main>
+<script>
+const W=[
+["careful","[ˈkeəfəl]","uzmanīgs / piesardzīgs","(adj) = cautious"],
+["catch the bus","","noķert autobusu","(phr) = to get on the bus"],
+["chat online","","tērzēt internetā","(phr) = to discuss with sb over the Internet"],
+["chore","[tʃɔː]","mājas darbs / pienākums mājās","(n) = housework"],
+["cook","[kʊk]","pavārs","(n) = sb who makes food"],
+["count on","[kaʊnt ɒn]","paļauties uz","(phr v) = to rely on"],
+["creative","[kriˈeɪtɪv]","radošs","(adj) = artistic, imaginative"],
+["customer","[ˈkʌstəmə]","klients / pircējs","(n) = sb who buys sth"],
+["cycling","[ˈsaɪklɪŋ]","riteņbraukšana","(n) = the activity of riding a bicycle"],
+["friendly","[ˈfrendli]","draudzīgs","(adj) = nice"],
+["hard-working","[hɑːd ˈwɜːkɪŋ]","strādīgs","(adj) = of sb who tries very hard"],
+["have a shower","","iet dušā","(phr) = to wash by standing under a device that lets water fall from a height"],
+["hospital","[ˈhɒspɪtl]","slimnīca","(n) = a place where doctors and nurses care for sick people"],
+["ice-skating","[ˈaɪs skeɪtɪŋ]","slidošana (uz ledus)","(n) = the activity of moving on ice while wearing special shoes"],
+["sociable","[ˈsəʊʃəbəl]","sabiedrisks","(adj) = friendly"],
+["swimming instructor","[ˈswɪmɪŋ ɪnˈstrʌktə]","peldēšanas instruktors","(n) = sb who teaches people how to swim"],
+["teacher","[ˈtiːtʃə]","skolotājs","(n) = sb who teaches people new things"],
+["theatre","[ˈθɪətə]","teātris","(n) = a place with a stage and seats where actors perform plays"],
+["tour guide","[tʊə gaɪd]","gids","(n) = sb who shows tourists around"],
+["travel agent","[ˈtrævəl ˌeɪdʒənt]","ceļojumu aģents","(n) = sb who arranges holidays for people"],
+["trekking","[ˈtrekɪŋ]","pārgājieni (treks)","(n) = the activity of walking a long way over difficult land"],
+["unfriendly","[ʌnˈfrendli]","nedraudzīgs","(adj) = of sb who isn’t nice to other people"],
+["unimaginative","[ˌʌnɪˈmædʒənətɪv]","bez iztēles / neradošs","(adj) = of sb who doesn’t have original ideas"],
+["unsociable","[ʌnˈsəʊʃəbəl]","nesabiedrisks","(adj) = of sb who doesn’t like being with other people"],
+["unusual","[ʌnˈjuːʒuəl]","neparasts","(adj) = not common"],
+["waiter","[ˈweɪtə]","oficiants","(n) = sb who brings food/drink to customers in a restaurant/café"],
+["the sun is setting","","saule riet","(phr) = the sun is going down at the end of the day"],
+["training","[ˈtreɪnɪŋ]","treniņš / apmācība","(n) = the act of learning how to do sth"],
+["first impression","","pirmais iespaids","(phr) = my opinion of sb the first time I meet them"],
+["nervous","[ˈnɜːvəs]","nervozs","(adj) = very anxious"]];
+const KEY="7b-unit1-v1";
+let S={};try{S=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function rec(i,ok){const s=S[i]||(S[i]={r:0,w:0});ok?s.r++:s.w++;save()}
+function speak(t){try{const u=new SpeechSynthesisUtterance(t.replace(/’/g,"'"));u.lang="en-GB";u.rate=.85;
+const v=speechSynthesis.getVoices().find(v=>v.lang==="en-GB");if(v)u.voice=v;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+const norm=s=>s.toLowerCase().replace(/[’‘`´]/g,"'").replace(/-/g," ").replace(/\s+/g," ").trim();
+let PART=0;const inPart=i=>PART===0||(PART===1?i<14:i>=14);
+function pick(){const ids=W.map((_,i)=>i).filter(inPart);
+const wt=ids.map(i=>Math.max(1+((S[i]||{}).w||0)*2-Math.min(((S[i]||{}).r||0),3)*0.3,.3));
+let t=wt.reduce((a,b)=>a+b,0)*Math.random();
+for(let k=0;k<ids.length;k++){t-=wt[k];if(t<=0)return ids[k]}return ids[ids.length-1]}
+const $=id=>document.getElementById(id);
+document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>{
+document.querySelectorAll("#nav button").forEach(x=>x.classList.toggle("on",x===b));
+["cards","dict","tr","list"].forEach(t=>$(t).classList.toggle("hid",t!==b.dataset.t));
+({cards:cardsInit,dict:dictInit,tr:trInit,list:listInit})[b.dataset.t]()});
+
+document.querySelectorAll("#ps button").forEach(b=>b.onclick=()=>{PART=+b.dataset.p;document.querySelectorAll("#ps button").forEach(x=>x.classList.toggle("on",x===b));document.querySelector("#nav button.on").click()});
+// Flashcards
+let dir="en",ci=0,flip=false;
+function cardsInit(){ci=pick();flip=false;cardsDraw()}
+function cardsDraw(){const w=W[ci];
+const front=dir==="en"?`<div class="big">${w[0]}</div><div class="ipa">${w[1]}</div>`:`<div class="big">${w[2]}</div>`;
+const back=dir==="en"?`<div class="big">${w[2]}</div><div class="mu">${w[3]}</div>`:`<div class="big">${w[0]}</div><div class="ipa">${w[1]}</div>`;
+$("cards").innerHTML=`<div class="sel"><button data-d="en" class="${dir==="en"?"on":""}">EN → LV</button><button data-d="lv" class="${dir==="lv"?"on":""}">LV → EN</button></div>
+${flip?back:front}<div class="row"><button class="b" id="sp">🔊 Klausīties</button><button class="b p" id="fl">${flip?"Nākamā":"Parādīt atbildi"}</button></div>
+${flip?`<div class="row"><button class="b" id="kn">✔ Zināju</button><button class="b" id="dn">✘ Nezināju</button></div>`:""}`;
+document.querySelectorAll("#cards [data-d]").forEach(b=>b.onclick=()=>{dir=b.dataset.d;flip=false;cardsDraw()});
+$("sp").onclick=()=>speak(w[0]);
+$("fl").onclick=()=>{if(flip){ci=pick();flip=false}else{flip=true;if(dir==="en")speak(w[0])}cardsDraw()};
+if(flip){$("kn").onclick=()=>{rec(ci,true);ci=pick();flip=false;cardsDraw()};$("dn").onclick=()=>{rec(ci,false);ci=pick();flip=false;cardsDraw()}}}
+
+// Typing modes
+function typing(id,mode){
+let i=pick(),done=false;
+function draw(){const w=W[i];
+const q=mode==="dict"?`<p class="mu">Noklausies vārdu un uzraksti to angliski</p><div class="big"><button class="b p" id="${id}sp">🔊 Atskaņot</button></div>`:`<p class="mu">Uzraksti angļu valodā</p><div class="big">${w[2]}</div>`;
+$(id).innerHTML=`${q}<input type="text" id="${id}in" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Raksti šeit…">
+<div class="fb" id="${id}fb"></div><div class="row"><button class="b p" id="${id}ok">Pārbaudīt</button></div>`;
+const inp=$(id+"in");inp.focus();
+if(mode==="dict"){$(id+"sp").onclick=()=>speak(w[0]);setTimeout(()=>speak(w[0]),250)}
+const go=()=>{if(done){i=pick();done=false;draw();return}
+const ok=norm(inp.value)===norm(w[0]);rec(i,ok);done=true;
+$(id+"fb").innerHTML=ok?`<span class="ok">✔ Pareizi! ${w[0]}</span>`:`<span class="bad">✘ Pareizi: ${w[0]}</span> <span class="mu">${w[1]}</span>`;
+$(id+"ok").textContent="Nākamais";if(!ok)speak(w[0])};
+$(id+"ok").onclick=go;inp.onkeydown=e=>{if(e.key==="Enter")go()}}
+draw()}
+function dictInit(){typing("dict","dict")}
+function trInit(){typing("tr","tr")}
+
+// List + progress
+function listInit(){
+$("list").innerHTML=`<table>${W.map((w,i)=>{if(!inPart(i))return "";const s=S[i]||{r:0,w:0};const t=s.r+s.w;
+return `<tr><td><button class="sp" data-i="${i}">🔊</button></td><td><b>${w[0]}</b><br><span class="mu">${w[1]}</span></td><td>${w[2]}<br><span class="mu">${w[3]}</span></td><td class="mu">${t?`${s.r}✔ ${s.w}✘`:"–"}</td></tr>`}).join("")}</table>
+<div class="row"><button class="b" id="rs">Notīrīt manus rezultātus</button></div>`;
+document.querySelectorAll("#list .sp").forEach(b=>b.onclick=()=>speak(W[b.dataset.i][0]));
+$("rs").onclick=()=>{S={};save();listInit()}}
+cardsInit();
+</script>
+</body>
+</html>
